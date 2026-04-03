@@ -41,7 +41,8 @@ export async function updateHintCommand(opts: UpdateHintOptions): Promise<void> 
     return;
   }
 
-  const latestVersion = state.lastAvailableVersion?.trim();
+  const latestVersion =
+    typeof state.lastAvailableVersion === "string" ? state.lastAvailableVersion.trim() : undefined;
   if (!latestVersion) {
     if (opts.json) {
       defaultRuntime.writeJson({ updateAvailable: false });
@@ -58,7 +59,8 @@ export async function updateHintCommand(opts: UpdateHintOptions): Promise<void> 
     return;
   }
 
-  const channel = state.lastAvailableTag?.trim() || "latest";
+  const channel =
+    (typeof state.lastAvailableTag === "string" && state.lastAvailableTag.trim()) || "latest";
 
   if (opts.json) {
     defaultRuntime.writeJson({
