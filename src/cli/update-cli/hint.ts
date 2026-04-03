@@ -32,7 +32,14 @@ export async function updateHintCommand(opts: UpdateHintOptions): Promise<void> 
   let state: UpdateCheckState;
   try {
     const raw = await fs.readFile(statePath, "utf-8");
-    state = JSON.parse(raw) as UpdateCheckState;
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      if (opts.json) {
+        defaultRuntime.writeJson({ updateAvailable: false });
+      }
+      return;
+    }
+    state = parsed as UpdateCheckState;
   } catch {
     // No state file or invalid JSON — nothing to report.
     if (opts.json) {
